@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe</title>
+    <style>
+      body {
+        /*font-family: Arial, sans-serif;*/
+        margin: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+      }
+
+      .form-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        /*border-radius: 4px;
+        box-sizing: border-box;*/
+      }
+
+      .form-check-input {
+        margin-right: 10px;
+      }
+
+      .form-check-label {
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 10px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      table thead th {
+        background-color: #f2f2f2;
+        color: #333;
+        font-weight: bold;
+        padding: 10px;
+        border-bottom: 2px solid #ddd;
+      }
+
+      table tbody tr {
+        border-bottom: 1px solid #ddd;
+      }
+
+      table tbody tr:nth-of-type(even) {
+        background-color: #f9f9f9;
+      }
+
+      table tbody th,
+      table tbody td {
+        padding: 10px;
+        vertical-align: top;
+      }
+
+      table tbody th {
+        font-weight: normal;
+        background-color: #f2f2f2;
+      }
+
+      table tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand">Navbar</a>
+        <form class="d-flex" role="search">
+          {% if request.user.is_authenticated %}
+          <a href="/logout/" class="btn btn-success" type="submit">Logout</a>
+
+          {% else %}
+          <a href="/login/" class="btn btn-success" type="submit">Login</a>
+          {% endif %}
+        </form>
+        <p>Debug - User authenticated: {{ request.user.is_authenticated }}</p>
+      </div>
+    </nav>
+
+    <div class="container">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Update Recipe</h2>
+        <div class="mb-3">
+          <label for="recipeName" class="form-label">Recipe name</label>
+          <input
+            name="recipe_name"
+            required
+            type="text"
+            class="form-control"
+            id="recipeName"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="recipeDescription" class="form-label"
+            >Recipe description</label
+          >
+          <textarea
+            id="recipeDescription"
+            class="form-control"
+            name="recipe_description"
+            required
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="recipeImage" class="form-label">Recipe Image</label>
+          <input
+            type="file"
+            name="recipe_image"
+            required
+            class="form-control"
+            id="recipeImage"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Add recipe</button>
+      </form>
+      <hr />
+      <div class="mt-5">
+        <div class="mx-auto">
+          <form>
+            <div class="mb-3">
+              <label for="recipeName" class="form-label">Search Food</label>
+              <input
+                name="search"
+                type="text"
+                class="form-control"
+                id="recipeName"
+              />
+              <button type="submit" class="btn btn-submit">search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Recipe name</th>
+            <th scope="col">Recipe desc</th>
+            <th scope="col">Image</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for recip in recipes %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{recip.recipe_name}}</td>
+            <td>{{recip.recipe_description}}</td>
+            <td>
+              <img src="/media/{{recip.recipe_image}}" style="height: 200px" />
+            </td>
+            <td>
+              <a href="/delete-recipe/{{recip.id}}/" class="btn btn-danger"
+                >Delete</a
+              >
+              <a href="/update-recipe/{{recip.id}}/" class="btn btn-success"
+                >Update</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
